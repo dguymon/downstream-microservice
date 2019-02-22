@@ -1,0 +1,55 @@
+spring:
+  output:
+    ansi:
+      enabled: DETECT
+  zipkin:
+    baseUrl: http://localhost:9411
+  sleuth:
+    log:
+      slf4j:
+        enabled: true
+    sampler:
+      probability: 1.0
+  application:
+    name: downstream-microservice
+  cloud:
+    client:
+      hostname: localhost
+
+server:
+  port: 8089
+  servlet:
+    contextPath: /downstream
+  compression:
+    enabled: true
+
+eureka:
+  cloud:
+    discovery:
+      enabled: false
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    healthCheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    statusPageUrlPath: ${server.servlet.contextPath}/actuator/info
+    healthCheckUrlPath: ${server.servlet.contextPath}/actuator/health
+    nonSecurePortEnabled: true
+    securePortEnabled: false
+
+java:
+  util:
+    logging:
+      manager: org.apache.logging.log4j.jul.LogManager
+      
+logging:
+  level:
+    org.springframework.web: ERROR
+    com.home.dguymon: DEBUG
+  pattern:
+    console: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [${spring.application.name:-},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}] %c{1} - %msg%n"
+    file: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+  file: logs/logfile.log
